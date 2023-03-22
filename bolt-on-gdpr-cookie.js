@@ -1,4 +1,4 @@
-/* bolt-on-gdpr-cookie v1.0
+/*! bolt-on-gdpr-cookie v1.0.0
  * MIT License - https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/LICENSE
  * Copyright (c) 2023 NOPE Office */
 
@@ -24,6 +24,7 @@ function set_cookie(name, value, max_age) {
 
 const lang               = typeof bogc_lang               !== 'undefined' ? bogc_lang               : 'en';
 const privacy_policy_url = typeof bogc_privacy_policy_url !== 'undefined' ? bogc_privacy_policy_url : '';
+const delay              = typeof bogc_delay              !== 'undefined' ? bogc_delay              : 2;
 const cookie_name        = typeof bogc_cookie_name        !== 'undefined' ? bogc_cookie_name        : '__gdpr_cookie';
 const cookie_max_age     = typeof bogc_cookie_max_age     !== 'undefined' ? bogc_cookie_max_age     : 60*60*24 * 400;
 const font_family        = typeof bogc_font_family        !== 'undefined' ? bogc_font_family        : '"Helvetica Neue", "Helvetica", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Arial", "Yu Gothic", "Meiryo", sans-serif';
@@ -149,14 +150,14 @@ const style = $(`
   to   { opacity: 0; transform: translateY(250px); }
 }
 .bogc_band_fadein {
-  animation: bogcFadeIn 1s ease 2s 1 normal backwards;
+  animation: bogcFadeIn 1s ease ${delay}s 1 normal backwards;
 }
 .bogc_band_fadeout {
   animation: bogcFadeOut 1s ease 0s 1 normal forwards;
 }
 @media screen and (max-width: 768px) {
   .bogc_band_fadein {
-    animation: bogcFadeInUnder768 1s ease 2s 1 normal backwards;
+    animation: bogcFadeInUnder768 1s ease ${delay}s 1 normal backwards;
   }
   .bogc_band_fadeout {
     animation: bogcFadeOutUnder768 1s ease 0s 1 normal forwards;

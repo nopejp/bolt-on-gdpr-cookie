@@ -1,6 +1,10 @@
 # bolt-on-gdpr-cookie
 
-image
+[![bolt-on-gdpr-cookie release](https://img.shields.io/github/release/nopejp/bolt-on-gdpr-cookie.svg?maxAge=2592000?style=flat-square)](https://github.com/nopejp/bolt-on-gdpr-cookie/releases)
+[![License MIT](http://img.shields.io/badge/license-MIT-orange.svg?style=flat)](https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/nopejp/bolt-on-gdpr-cookie/pulls)
+
+![](https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/capture.gif)
 
 ## Description
 
@@ -63,6 +67,7 @@ customize
 | ----------------------- | :-----------------------------------: | :----: | :---------: | ----------------: |
 | bogc_lang               | Language                              | string | en, ja      | en                |
 | bogc_privacy_policy_url | Privacy policy page url               | string | -           |                   |
+| bogc_delay              | Slide-in delay in second              | number | -           | 2                 |
 | bogc_cookie_name        | Cookie name that stores user settings | string | -           | __gdpr_cookie     |
 | bogc_cookie_max_age     | Cookie max-age                        | number | -           | 60\*60\*24 \* 400 |
 | bogc_font_family        | Font family                           | string | -           | "Helvetica Neue", "Helvetica", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Arial", "Yu Gothic", "Meiryo", sans-serif' |
