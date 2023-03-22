@@ -1,0 +1,1 @@
+# bolt-on-gdpr-cookie
