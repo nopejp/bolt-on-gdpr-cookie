@@ -1,4 +1,4 @@
-/*! bolt-on-gdpr-cookie v1.0.0
+/*! bolt-on-gdpr-cookie v1.0.1
  * MIT License - https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/LICENSE
  * Copyright (c) 2023 NOPE Office */
 
@@ -6,32 +6,38 @@
 
 'use strict';
 
-function get_cookie(name) {
-  const arr = document.cookie.split(';');
-  for (const value of arr) {
-    const content = value.split('=');
-    if (content[0].trim() == name) {
-      return decodeURIComponent(content[1].trim());
-    }
-  }
-  return '';
-}
-function set_cookie(name, value, max_age) {
-  document.cookie = name + '=' + encodeURIComponent(value) + '; max-age=' + max_age + ';';
-}
-
-// --
-
 const lang               = typeof bogc_lang               !== 'undefined' ? bogc_lang               : 'en';
 const privacy_policy_url = typeof bogc_privacy_policy_url !== 'undefined' ? bogc_privacy_policy_url : '';
 const delay              = typeof bogc_delay              !== 'undefined' ? bogc_delay              : 2;
-const cookie_name        = typeof bogc_cookie_name        !== 'undefined' ? bogc_cookie_name        : '__gdpr_cookie';
+const storage            = typeof bogc_storage            !== 'undefined' ? bogc_storage            : 'localstorage';
+const stored_name        = typeof bogc_stored_name        !== 'undefined' ? bogc_stored_name        : '__gdpr_cookie';
 const cookie_max_age     = typeof bogc_cookie_max_age     !== 'undefined' ? bogc_cookie_max_age     : 60*60*24 * 400;
 const font_family        = typeof bogc_font_family        !== 'undefined' ? bogc_font_family        : '"Helvetica Neue", "Helvetica", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Arial", "Yu Gothic", "Meiryo", sans-serif';
 const button_color       = typeof bogc_button_color       !== 'undefined' ? bogc_button_color       : '#27acd9';
 
-const cookie = get_cookie(cookie_name);
-if (cookie) return;
+function get_storage() {
+  if (storage === 'localstorage') {
+    return window.localStorage.getItem(stored_name);
+  } else {
+    const arr = document.cookie.split(';');
+    for (const value of arr) {
+      const content = value.split('=');
+      if (content[0].trim() == stored_name) {
+        return decodeURIComponent(content[1].trim());
+      }
+    }
+  }
+  return '';
+}
+function set_storage(value) {
+  if (storage === 'localstorage') {
+    window.localStorage.setItem(stored_name, value);
+  } else {
+    document.cookie = stored_name + '=' + encodeURIComponent(value) + '; max-age=' + cookie_max_age + ';';
+  }
+}
+
+if (get_storage()) return;
 
 const surface_text = {
   en: {
@@ -581,23 +587,23 @@ $('[id^=bogc-modal-question]').click(function(){
 
 // on accept all
 $('.bogc_band_button_accept').click(function(){
-  set_cookie(cookie_name, JSON.stringify({
+  set_storage(JSON.stringify({
     strictly: true,
     performance: true,
     functional: true,
     targeting: true,
-  }), cookie_max_age);
+  }));
   $('.bogc_band').addClass('bogc_band_fadeout');
 });
 
 // on save settings
 $('.bogc_modal_button').click(function(){
-  set_cookie(cookie_name, JSON.stringify({
+  set_storage(JSON.stringify({
     strictly: true,
     performance: $('#bogc-modal-toggle-performance').prop('checked'),
     functional: $('#bogc-modal-toggle-functional').prop('checked'),
     targeting: $('#bogc-modal-toggle-targeting').prop('checked'),
-  }), cookie_max_age);
+  }));
   $('#bogc-modal').fadeOut();
   $('.bogc_band').addClass('bogc_band_fadeout');
 });
