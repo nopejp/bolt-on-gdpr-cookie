@@ -1,4 +1,4 @@
-/*! bolt-on-gdpr-cookie v1.0.1
+/*! bolt-on-gdpr-cookie v1.0.2
  * MIT License - https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/LICENSE
  * Copyright (c) 2023 NOPE Office */
 
@@ -110,8 +110,7 @@ const surface_text = {
   },
 };
 
-const style = $(`
-<style>
+const css = `
 .bogc_band {
   position: fixed;
   left: 0;
@@ -155,17 +154,17 @@ const style = $(`
   from { opacity: 1; transform: translateY(0);     }
   to   { opacity: 0; transform: translateY(250px); }
 }
-.bogc_band_fadein {
+.bogc_band.fadein {
   animation: bogcFadeIn 1s ease ${delay}s 1 normal backwards;
 }
-.bogc_band_fadeout {
+.bogc_band.fadeout {
   animation: bogcFadeOut 1s ease 0s 1 normal forwards;
 }
 @media screen and (max-width: 768px) {
-  .bogc_band_fadein {
+  .bogc_band.fadein {
     animation: bogcFadeInUnder768 1s ease ${delay}s 1 normal backwards;
   }
-  .bogc_band_fadeout {
+  .bogc_band.fadeout {
     animation: bogcFadeOutUnder768 1s ease 0s 1 normal forwards;
   }
 }
@@ -211,10 +210,12 @@ const style = $(`
   width: 180px;
   height: fit-content;
   padding: 5px;
-  transition: 0.5s;
+  transition: .5s;
   cursor: pointer;
   font-size: 14px;
   border-radius: 20px;
+  tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 @media screen and (max-width: 1200px) {
   .bogc_band_button {
@@ -235,21 +236,21 @@ const style = $(`
     font-size: 9px;
   }
 }
-.bogc_band_button_accept {
+.bogc_band_button.accept {
   color: #333;
   border: 2px solid #ddd;
   background-color: #ddd;
 }
-.bogc_band_button_accept:hover {
+.bogc_band_button.accept:hover {
   color: #fff;
   border-color: ${button_color};
   background-color: ${button_color};
 }
-.bogc_band_button_custom {
+.bogc_band_button.custom {
   color: #ddd;
   border: 2px solid #ddd;
 }
-.bogc_band_button_custom:hover {
+.bogc_band_button.custom:hover {
   color: #fff;
   border-color: ${button_color};
   background-color: ${button_color};
@@ -280,11 +281,9 @@ const style = $(`
 .bogc_band_close::after {
   transform: translate(-50%,-50%) rotate(-45deg);
 }
-</style>
-`);
+`;
 
-const band = $(`
-<div class="bogc_band bogc_band_fadein">
+const band_inner = `
   <div class="bogc_band_close"></div>
   <div class="bogc_band_inner">
     <div class="bogc_band_notice">
@@ -296,25 +295,37 @@ const band = $(`
       </p>
     </div>
     <div class="bogc_band_buttons">
-      <div class="bogc_band_button bogc_band_button_accept">${surface_text[lang].btn_accept}</div>
-      <div class="bogc_band_button bogc_band_button_custom">${surface_text[lang].btn_custom}</div>
+      <div class="bogc_band_button accept">${surface_text[lang].btn_accept}</div>
+      <div class="bogc_band_button custom">${surface_text[lang].btn_custom}</div>
     </div>
   </div>
-</div>
-`);
+`;
 
-const modal_style = $(`
-<style>
+const modal_css = `
 .bogc_modal {
-  display: none;
+  opacity: 0;
   position: fixed;
-  z-index: 10001;
+  z-index: -999;
+  visibility: hidden;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   font-family: ${font_family};
   font-size: 13px;
+  transition:
+    opacity 0.5s,
+    visibility 0.5s,
+    z-index 0s 1s;
+}
+.bogc_modal.open {
+  opacity: 1;
+  z-index: 10001;
+  visibility: visible;
+  transition:
+    opacity 0.5s,
+    visibility 0.5s,
+    z-index 0s;
 }
 .bogc_modal_backdrop {
   width: 100%;
@@ -376,9 +387,26 @@ const modal_style = $(`
   tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+
 .bogc_modal_question_target {
-  display: none;
+  line-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  margin-bottom: 0;
+  transition:
+    line-height 0.3s ease-out,
+    opacity     0.1s linear,
+    visibility  0.1s linear;
+}
+.bogc_modal_question_target.open {
+  line-height: 1.5;
+  opacity: 1;
+  visibility: visible;
   margin-bottom: 20px;
+  transition:
+    line-height 0.3s ease-out,
+    opacity     0.1s linear 0.1s,
+    visibility  0.1s linear 0.1s;
 }
 .bogc_modal_toggle_button {
   position: relative;
@@ -451,6 +479,8 @@ const modal_style = $(`
   border-radius: 5px;
   color: #333;
   border: 2px solid #333;
+  tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 .bogc_modal_button:hover {
   color: #fff;
@@ -472,11 +502,9 @@ const modal_style = $(`
   color: #ddd;
   text-decoration: none;
 }
-</style>
-`);
+`;
 
-const modal = $(`
-<div id="bogc-modal" class="bogc_modal">
+const modal_inner = `
   <div id="bogc-modal-backdrop" class="bogc_modal_backdrop"></div>
   <div class="bogc_modal_wrapper">
     <div class="bogc_modal_contents">
@@ -499,9 +527,9 @@ const modal = $(`
           </div>
         </li>
         <li id="bogc-modal-question-strictly-target" class="bogc_modal_question_target">
-          <div>
+          <p>
             ${surface_text[lang].sc_note}
-          </div>
+          </p>
         </li>
         <li>
           <div class="bogc_modal_cookie_name">
@@ -514,9 +542,9 @@ const modal = $(`
           </div>
         </li>
         <li id="bogc-modal-question-performance-target" class="bogc_modal_question_target">
-          <div>
+          <p>
             ${surface_text[lang].pc_note}
-          </div>
+          </p>
         </li>
         <li>
           <div class="bogc_modal_cookie_name">
@@ -529,9 +557,9 @@ const modal = $(`
           </div>
         </li>
         <li id="bogc-modal-question-functional-target" class="bogc_modal_question_target">
-          <div>
+          <p>
             ${surface_text[lang].fc_note}
-          </div>
+          </p>
         </li>
         <li>
           <div class="bogc_modal_cookie_name">
@@ -544,9 +572,9 @@ const modal = $(`
           </div>
         </li>
         <li id="bogc-modal-question-targeting-target" class="bogc_modal_question_target">
-          <div>
+          <p>
             ${surface_text[lang].tc_note}
-          </div>
+          </p>
         </li>
       </ul>
     </div>
@@ -557,55 +585,76 @@ const modal = $(`
       <a href="https://github.com/nopejp/bolt-on-gdpr-cookie" target="_blank" rel="noopener">Powered by NOPE Office</a>
     </div>
   </div>
-</div>
-`);
+`;
 
 // --
 
-$('body').append(style).append(band).append(modal_style).append(modal);
+const style = document.createElement('style');
+style.insertAdjacentHTML('beforeend', css)
+document.body.appendChild(style);
+
+const band = document.createElement('div');
+band.classList.add('bogc_band');
+band.classList.add('fadein');
+band.insertAdjacentHTML('beforeend', band_inner)
+document.body.appendChild(band);
 if (privacy_policy_url) {
-  $('#bogc-privacy-policy').attr('href', privacy_policy_url);
+  document.querySelector('#bogc-privacy-policy').setAttribute('href', privacy_policy_url);
 }
 
+const modal_style = document.createElement('style');
+modal_style.insertAdjacentHTML('beforeend', modal_css)
+document.body.appendChild(modal_style);
+
+const modal = document.createElement('div');
+modal.id = ('bogc-modal');
+modal.classList.add('bogc_modal');
+modal.insertAdjacentHTML('beforeend', modal_inner)
+document.body.appendChild(modal);
+
+// --
+
 // on cancel
-$('.bogc_band_close').click(function(){
-  $('.bogc_band').addClass('bogc_band_fadeout');
+document.querySelector('.bogc_band_close').addEventListener('click', function(){
+  document.querySelector('.bogc_band').classList.add('fadeout');
 });
 
 // toggle modal
-$('.bogc_band_button_custom').click(function(){
-  $('#bogc-modal').fadeIn();
+document.querySelector('.bogc_band_button.custom').addEventListener('click', function(){
+  document.querySelector('#bogc-modal').classList.add('open');
 });
-$('#bogc-modal-backdrop').click(function(){
-  $('#bogc-modal').fadeOut();
+document.querySelector('#bogc-modal-backdrop').addEventListener('click', function(){
+  document.querySelector('#bogc-modal').classList.remove('open');
 });
 
 // modal accordion
-$('[id^=bogc-modal-question]').click(function(){
-  $('#' + $(this).attr('id') + '-target').slideToggle();
+document.querySelectorAll('.bogc_modal_question').forEach(function(item){
+  item.addEventListener('click', function(){
+    document.querySelector('#' + item.id + '-target').classList.toggle('open');
+  });
 });
 
 // on accept all
-$('.bogc_band_button_accept').click(function(){
+document.querySelector('.bogc_band_button.accept').addEventListener('click', function(){
   set_storage(JSON.stringify({
     strictly: true,
     performance: true,
     functional: true,
     targeting: true,
   }));
-  $('.bogc_band').addClass('bogc_band_fadeout');
+  document.querySelector('.bogc_band').classList.add('fadeout');
 });
 
 // on save settings
-$('.bogc_modal_button').click(function(){
+document.querySelector('.bogc_modal_button').addEventListener('click', function(){
   set_storage(JSON.stringify({
     strictly: true,
-    performance: $('#bogc-modal-toggle-performance').prop('checked'),
-    functional: $('#bogc-modal-toggle-functional').prop('checked'),
-    targeting: $('#bogc-modal-toggle-targeting').prop('checked'),
+    performance: document.querySelector('#bogc-modal-toggle-performance').checked,
+    functional: document.querySelector('#bogc-modal-toggle-functional').checked,
+    targeting: document.querySelector('#bogc-modal-toggle-targeting').checked,
   }));
-  $('#bogc-modal').fadeOut();
-  $('.bogc_band').addClass('bogc_band_fadeout');
+  document.querySelector('#bogc-modal').classList.remove('open');
+  document.querySelector('.bogc_band').classList.add('fadeout');
 });
 
 }());

@@ -18,12 +18,6 @@ User settings are saved in localstorage or cookies.
 - Supports English and Japanese
 - Responsive design
 
-## Dependencies
-
-- jQuery 1.x: >= 1.2.0
-- jQuery 2.x: >= 2.0.1
-- jQuery 3.x: >= 3.0.0
-
 ## Usage
 
 ```html
@@ -31,8 +25,6 @@ User settings are saved in localstorage or cookies.
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <!-- jquery -->
-    <script src="jquery-3.6.4.min.js"></script>
   </head>
   <body>
     <script src="bolt-on-gdpr-cookie.js"></script>
@@ -47,8 +39,6 @@ customize
 <html lang="ja">
   <head>
     <meta charset="utf-8">
-    <!-- jquery -->
-    <script src="jquery-3.6.4.min.js"></script>
   </head>
   <body>
     <script>
