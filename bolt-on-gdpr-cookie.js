@@ -1,4 +1,4 @@
-/*! bolt-on-gdpr-cookie v1.0.2
+/*! bolt-on-gdpr-cookie v1.0.3
  * MIT License - https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/LICENSE
  * Copyright (c) 2023 NOPE Office */
 
@@ -342,6 +342,11 @@ const modal_css = `
   padding: 30px;
   background-color: #fff;
   border-radius: 10px;
+}
+@media screen and (max-width: 480px) {
+  .bogc_modal_wrapper {
+    width: calc(100% - 30px);
+  }
 }
 .bogc_modal_contents {
   color: #666;
