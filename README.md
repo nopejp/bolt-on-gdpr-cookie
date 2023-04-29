@@ -4,7 +4,7 @@
 [![License MIT](http://img.shields.io/badge/license-MIT-orange.svg?style=flat)](https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/nopejp/bolt-on-gdpr-cookie/pulls)
 
-![](https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/capture.gif)
+![](https://github.com/nopejp/bolt-on-gdpr-cookie/blob/main/capture.gif?raw=true)
 
 ## Description
 
